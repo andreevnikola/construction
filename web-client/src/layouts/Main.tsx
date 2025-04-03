@@ -3,7 +3,7 @@ import { Link, Outlet, useLocation } from "react-router";
 export default function Main() {
   const location = useLocation();
   const isLanding = location.pathname === "/";
-  const isWorker = location.pathname === "/workers";
+  const isWorker = location.pathname === "/employees";
   const isProject = location.pathname === "/projects";
 
   return (
@@ -30,7 +30,7 @@ export default function Main() {
                   : ""
               }
             >
-              <Link to={"/workers"}>Workers</Link>
+              <Link to={"/employees"}>Employees</Link>
             </li>
             <li
               className={
@@ -44,8 +44,10 @@ export default function Main() {
           </ul>
         </div>
       </div>
-      <div className="bg-base-200/40 min-h-screen">
-        <Outlet />
+      <div className="w-full flex items-center justify-center bg-base-200/40">
+        <div className="min-h-screen w-full max-w-[1300px] py-8 px-2">
+          <Outlet />
+        </div>
       </div>
       <div className="w-full bg-base-content">
         <div className="container mx-auto p-4">

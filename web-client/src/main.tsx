@@ -4,8 +4,8 @@ import "./index.css";
 import { BrowserRouter, Route, Routes } from "react-router";
 import Main from "./layouts/Main";
 import LandingAnalitics from "./pages/LandingAnalitics";
-import Workers from "./pages/Workers";
 import Projects from "./pages/Projects";
+import Employees from "./pages/Employees";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -13,7 +13,7 @@ createRoot(document.getElementById("root")!).render(
       <Routes>
         <Route path="/" element={<Main />}>
           <Route index element={<LandingAnalitics />} />
-          <Route path="/workers" element={<Workers />} />
+          <Route path="/employees" element={<Employees />} />
           <Route path="/projects" element={<Projects />} />
         </Route>
       </Routes>
