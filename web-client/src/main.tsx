@@ -7,10 +7,12 @@ import LandingAnalitics from "./pages/LandingAnalitics";
 import Projects from "./pages/Projects";
 import Employees from "./pages/Employees";
 import Employee from "./pages/Employee";
+import ScrollToTop from "./components/ScrollToTop";
 
 createRoot(document.getElementById("root")!).render(
   // <StrictMode>
   <BrowserRouter>
+    <ScrollToTop />
     <Routes>
       <Route path="/" element={<Main />}>
         <Route index element={<LandingAnalitics />} />
