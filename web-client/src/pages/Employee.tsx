@@ -27,6 +27,10 @@ export default function Employee() {
 
   const handleDelete = async () => {
     if (employee) {
+      const confirmation = confirm(
+        `Are you sure you want to delete ${employee.name}?`
+      );
+      if (!confirmation) return;
       try {
         await pb.collection("employees").delete(employee.id || "");
         alert(`Employee ${employee.name} has been deleted!`);

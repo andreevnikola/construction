@@ -30,7 +30,7 @@ export default function Employees() {
       <EmployeeCreationForm
         onCreation={() => setRefetches((refetches) => refetches + 1)}
       />
-      <h2 className="text-4xl font-semibold border-l-8 pl-2 border-primary mt-16">
+      <h2 className="text-4xl font-semibold border-l-8 pl-2 border-primary mt-10">
         Current <u className="decoration-primary font-extrabold">employees</u>:
       </h2>
       {employeesList.length > 0 ? (
