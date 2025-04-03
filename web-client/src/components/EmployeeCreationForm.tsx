@@ -1,10 +1,42 @@
-import { FormEvent } from "react";
+import pb from "../lib/pocketbase";
 
 export default function EmployeeCreationForm() {
-  const handleCreation = (e: FormEvent<HTMLFormElement>) => {
+  const handleCreation = async (e: any) => {
     e.preventDefault();
 
-    const form = e.target;
+    const form = e.target.elements;
+
+    const position = form.position.value;
+    const name = form.name.value;
+    const wage = form.wage.value;
+    const baseline = form.baseline.value;
+
+    const employee = {
+      position,
+      name,
+      wage: Number(wage),
+      baseline: Number(baseline),
+    };
+
+    let saved;
+    try {
+      saved = await pb.collection("employees").create(employee);
+      alert(`Employee ${saved.name} (${saved.position}) has been created!`);
+      Array.from(e.target.elements).forEach((element: any) => {
+        if (element.tagName === "INPUT" || element.tagName === "TEXTAREA") {
+          element.value = "";
+        }
+        if (element.tagName === "SELECT") {
+          element.selectedIndex = 0;
+        }
+      });
+    } catch (error) {
+      console.error("Error creating employee:", error);
+      alert("Unable to create an given employee. Please contact the creator.");
+      return;
+    }
+
+    console.log("Employee created:", saved);
   };
 
   return (
@@ -17,16 +49,18 @@ export default function EmployeeCreationForm() {
           <fieldset className="fieldset">
             <legend className="fieldset-legend text-[16px]">Position:</legend>
             <select
-              defaultValue="Obshtak"
+              name="position"
+              defaultValue="obshtak"
               className="select-lg select w-full -mt-1.5"
             >
-              <option>Obshtak</option>
-              <option>Maistor</option>
+              <option>obshtak</option>
+              <option>maistor</option>
             </select>
           </fieldset>
           <fieldset className="fieldset">
             <legend className="fieldset-legend text-[16px]">Name:</legend>
             <input
+              name="name"
               type="text"
               className="input-lg w-full input -mt-1.5"
               placeholder="Иван Божуков"
@@ -37,6 +71,7 @@ export default function EmployeeCreationForm() {
               Wage: (per day in BGN)
             </legend>
             <input
+              name="wage"
               type="number"
               className="input-lg w-full input -mt-1.5"
               placeholder="110"
@@ -50,6 +85,7 @@ export default function EmployeeCreationForm() {
               Baseline income: (per day in BGN)
             </legend>
             <input
+              name="baseline"
               type="number"
               className="input-lg w-full input -mt-1.5"
               placeholder="200"
