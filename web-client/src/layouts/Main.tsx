@@ -8,7 +8,7 @@ export default function Main() {
 
   return (
     <>
-      <div className="navbar bg-base-100 shadow-sm">
+      <div className="navbar bg-base-100/80 backdrop-blur-lg shadow-sm sticky top-0 z-50">
         <div className="flex-1">
           <p className="text-xl font-semibold">Construction Manager</p>
         </div>

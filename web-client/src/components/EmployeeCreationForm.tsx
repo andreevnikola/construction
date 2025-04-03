@@ -1,6 +1,10 @@
+import { useState } from "react";
 import pb from "../lib/pocketbase";
+import { IEmployee } from "../types/employee";
 
 export default function EmployeeCreationForm() {
+  const [type, setType] = useState("obshtak");
+
   const handleCreation = async (e: any) => {
     e.preventDefault();
 
@@ -11,23 +15,21 @@ export default function EmployeeCreationForm() {
     const wage = form.wage.value;
     const baseline = form.baseline.value;
 
-    const employee = {
+    const employee: IEmployee = {
       position,
       name,
       wage: Number(wage),
-      baseline: Number(baseline),
+      baseline_income: Number(baseline),
     };
 
     let saved;
     try {
       saved = await pb.collection("employees").create(employee);
       alert(`Employee ${saved.name} (${saved.position}) has been created!`);
+      setType("obshtak");
       Array.from(e.target.elements).forEach((element: any) => {
         if (element.tagName === "INPUT" || element.tagName === "TEXTAREA") {
           element.value = "";
-        }
-        if (element.tagName === "SELECT") {
-          element.selectedIndex = 0;
         }
       });
     } catch (error) {
@@ -50,7 +52,8 @@ export default function EmployeeCreationForm() {
             <legend className="fieldset-legend text-[16px]">Position:</legend>
             <select
               name="position"
-              defaultValue="obshtak"
+              value={type}
+              onChange={(e) => setType(e.target.value)}
               className="select-lg select w-full -mt-1.5"
             >
               <option>obshtak</option>
@@ -89,6 +92,7 @@ export default function EmployeeCreationForm() {
               type="number"
               className="input-lg w-full input -mt-1.5"
               placeholder="200"
+              disabled={type !== "maistor"}
             />
             <p className="fieldset-label">
               How much your company should be making to break even from his work
