@@ -8,6 +8,7 @@ import { Link } from "react-router";
 
 export default function Employees() {
   const [employeesList, setEmployeesList] = useState<IEmployee[]>([]);
+  const [refetches, setRefetches] = useState(0);
 
   useEffect(() => {
     const fetchEmployees = async () => {
@@ -22,11 +23,13 @@ export default function Employees() {
     };
 
     fetchEmployees();
-  }, []);
+  }, [refetches]);
 
   return (
     <div className="flex flex-col gap-8 pb-10">
-      <EmployeeCreationForm />
+      <EmployeeCreationForm
+        onCreation={() => setRefetches((refetches) => refetches + 1)}
+      />
       <h2 className="text-4xl font-semibold border-l-8 pl-2 border-primary mt-16">
         Current <u className="decoration-primary font-extrabold">employees</u>:
       </h2>

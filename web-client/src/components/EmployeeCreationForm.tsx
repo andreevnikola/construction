@@ -2,7 +2,11 @@ import { useState } from "react";
 import pb from "../lib/pocketbase";
 import { IEmployee } from "../types/employee";
 
-export default function EmployeeCreationForm() {
+export default function EmployeeCreationForm({
+  onCreation,
+}: {
+  onCreation: () => void;
+}) {
   const [type, setType] = useState("obshtak");
 
   const handleCreation = async (e: any) => {
@@ -26,6 +30,7 @@ export default function EmployeeCreationForm() {
     try {
       saved = await pb.collection("employees").create(employee);
       alert(`Employee ${saved.name} (${saved.position}) has been created!`);
+      onCreation();
       setType("obshtak");
       Array.from(e.target.elements).forEach((element: any) => {
         if (element.tagName === "INPUT" || element.tagName === "TEXTAREA") {

@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router";
+import { Link, useNavigate, useParams } from "react-router";
 import { IEmployee } from "../types/employee";
 import { useEffect, useState } from "react";
 import pb from "../lib/pocketbase";
@@ -8,6 +8,7 @@ export default function Employee() {
   // the dynamic pieces of the URL.
   let { id } = useParams();
   const [employee, setEmployee] = useState<IEmployee | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchEmployee = async () => {
@@ -23,6 +24,18 @@ export default function Employee() {
 
     fetchEmployee();
   }, []);
+
+  const handleDelete = async () => {
+    if (employee) {
+      try {
+        await pb.collection("employees").delete(employee.id || "");
+        alert(`Employee ${employee.name} has been deleted!`);
+        navigate("/employees");
+      } catch (error) {
+        console.error("Error deleting employee:", error);
+      }
+    }
+  };
 
   return (
     <>
@@ -40,8 +53,8 @@ export default function Employee() {
             </ul>
           </div>
           <section className="flex flex-col items-center gap-5 border-2 border-primary w-full px-10 py-10 rounded-xl bg-base-100">
-            <div className="flex flex-col gap-6">
-              <h2 className="text-3xl font-semibold border-l-8 -ml-6 pl-3 border-accent">
+            <div className="flex flex-col gap-6  w-fit ">
+              <h2 className="text-3xl font-semibold border-l-8 -ml-6 pl-3 border-accent pr-20">
                 Employee{" "}
                 <u className="decoration-primary font-extrabold">details</u>:
               </h2>
@@ -61,6 +74,17 @@ export default function Employee() {
                     ? employee.baseline_income + " BGN"
                     : "N/A"}
                 </p>
+              </div>
+              <div className="flex w-full gap-2">
+                <button className="btn flex grow " disabled>
+                  Update
+                </button>
+                <button
+                  className="btn btn-error flex grow"
+                  onClick={handleDelete}
+                >
+                  Delete
+                </button>
               </div>
             </div>
           </section>
