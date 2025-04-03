@@ -3,8 +3,8 @@ import { Link, Outlet, useLocation } from "react-router";
 export default function Main() {
   const location = useLocation();
   const isLanding = location.pathname === "/";
-  const isWorker = location.pathname === "/employees";
-  const isProject = location.pathname === "/projects";
+  const isWorker = location.pathname.includes("/employees");
+  const isProject = location.pathname.includes("/projects");
 
   return (
     <>
@@ -45,7 +45,7 @@ export default function Main() {
         </div>
       </div>
       <div className="w-full flex items-center justify-center bg-base-200/40">
-        <div className="min-h-screen w-full max-w-[1300px] py-8 px-2">
+        <div className="min-h-screen w-full max-w-[1300px] py-8 px-6">
           <Outlet />
         </div>
       </div>

@@ -6,6 +6,7 @@ import Main from "./layouts/Main";
 import LandingAnalitics from "./pages/LandingAnalitics";
 import Projects from "./pages/Projects";
 import Employees from "./pages/Employees";
+import Employee from "./pages/Employee";
 
 createRoot(document.getElementById("root")!).render(
   // <StrictMode>
@@ -14,6 +15,7 @@ createRoot(document.getElementById("root")!).render(
       <Route path="/" element={<Main />}>
         <Route index element={<LandingAnalitics />} />
         <Route path="/employees" element={<Employees />} />
+        <Route path="/employees/:id" element={<Employee />} />
         <Route path="/projects" element={<Projects />} />
       </Route>
     </Routes>
