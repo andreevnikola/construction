@@ -14,17 +14,31 @@ export default function Main() {
         </div>
         <div className="flex-none">
           <ul className="menu menu-horizontal px-1">
-            <li>
-              <Link to={"/"}>
-                <u className="decoration-primary decoration-2 font-bold ">
-                  Records
-                </u>
-              </Link>
+            <li
+              className={
+                isLanding
+                  ? "underline decoration-primary decoration-2 font-bold "
+                  : ""
+              }
+            >
+              <Link to={"/"}>Records</Link>
             </li>
-            <li>
+            <li
+              className={
+                isWorker
+                  ? "underline decoration-primary decoration-2 font-bold "
+                  : ""
+              }
+            >
               <Link to={"/workers"}>Workers</Link>
             </li>
-            <li>
+            <li
+              className={
+                isProject
+                  ? "underline decoration-primary decoration-2 font-bold "
+                  : ""
+              }
+            >
               <Link to={"/projects"}>Projects</Link>
             </li>
           </ul>
