@@ -8,6 +8,7 @@ import Employees from "./pages/Employees";
 import Employee from "./pages/Employee";
 import ScrollToTop from "./components/ScrollToTop";
 import Projects from "./pages/Projects";
+import Project from "./pages/Project";
 
 createRoot(document.getElementById("root")!).render(
   // <StrictMode>
@@ -19,6 +20,7 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/employees" element={<Employees />} />
         <Route path="/employees/:name" element={<Employee />} />
         <Route path="/projects" element={<Projects />} />
+        <Route path="/projects/:id" element={<Project />} />
       </Route>
     </Routes>
   </BrowserRouter>
