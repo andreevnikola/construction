@@ -1,110 +1,91 @@
 import { useState } from "react";
 import pb from "../lib/pocketbase";
-import { IEmployee } from "../types/employee";
+import { IProject } from "../types/project";
 
 export default function ProjectCreationForm({
   onCreation,
 }: {
   onCreation: () => void;
 }) {
-  const [type, setType] = useState("obshtak");
-
   const handleCreation = async (e: any) => {
     e.preventDefault();
 
     const form = e.target.elements;
 
-    const position = form.position.value;
     const name = form.name.value;
-    const wage = form.wage.value;
-    const baseline = form.baseline.value;
+    const pricetag = form.pricetag.value;
+    const is_active = form.is_active.checked;
 
-    const employee: IEmployee = {
-      position,
+    const project: IProject = {
       name,
-      wage: Number(wage),
-      baseline_income: Number(baseline),
+      pricetag: Number(pricetag),
+      is_active,
     };
 
     let saved;
     try {
-      saved = await pb.collection("employees").create(employee);
-      alert(`Employee ${saved.name} (${saved.position}) has been created!`);
+      saved = await pb.collection("projects").create(project);
+      alert(`Project ${saved.name} (${saved.position}) has been created!`);
       onCreation();
-      setType("obshtak");
       Array.from(e.target.elements).forEach((element: any) => {
         if (element.tagName === "INPUT" || element.tagName === "TEXTAREA") {
           element.value = "";
+          element.checked = false;
         }
       });
     } catch (error) {
-      console.error("Error creating employee:", error);
-      alert("Unable to create an given employee. Please contact the creator.");
+      console.error("Error creating project:", error);
+      alert("Unable to create an given project. Please contact the creator.");
       return;
     }
 
-    console.log("Employee created:", saved);
+    console.log("Project created:", saved);
   };
 
   return (
     <section className="w-full rounded-xl border-2 shadow shadow-primary/50 border-base-200 bg-base-100 py-10 px-8 flex items-center justify-center">
       <div className="w-full max-w-lg">
         <h2 className="text-3xl font-semibold border-l-4 -ml-4 pl-3 border-accent">
-          Sign an <u className="decoration-primary font-extrabold">employee</u>
+          Create a <u className="decoration-primary font-extrabold">project</u>
         </h2>
         <form onSubmit={handleCreation} className="flex flex-col gap-3 mt-5">
-          <fieldset className="fieldset">
-            <legend className="fieldset-legend text-[16px]">Position:</legend>
-            <select
-              name="position"
-              value={type}
-              onChange={(e) => setType(e.target.value)}
-              className="select-lg select w-full -mt-1.5"
-            >
-              <option>obshtak</option>
-              <option>maistor</option>
-            </select>
-          </fieldset>
           <fieldset className="fieldset">
             <legend className="fieldset-legend text-[16px]">Name:</legend>
             <input
               name="name"
               type="text"
               className="input-lg w-full input -mt-1.5"
-              placeholder="Иван Божуков"
+              placeholder="Копривщица - Къща за гости"
             />
           </fieldset>
           <fieldset className="fieldset">
             <legend className="fieldset-legend text-[16px]">
-              Wage: (per day in BGN)
+              Pricetag: (in BGN)
             </legend>
             <input
-              name="wage"
+              name="pricetag"
               type="number"
               className="input-lg w-full input -mt-1.5"
-              placeholder="110"
+              placeholder="11000"
             />
             <p className="fieldset-label">
-              How much you pay said worker for an 8 hour work day.
+              How much is the overall income from the given project.
             </p>
           </fieldset>
-          <fieldset className="fieldset">
-            <legend className="fieldset-legend text-[16px]">
-              Baseline income: (per day in BGN)
-            </legend>
-            <input
-              name="baseline"
-              type="number"
-              className="input-lg w-full input -mt-1.5"
-              placeholder="200"
-              disabled={type !== "maistor"}
-            />
-            <p className="fieldset-label">
-              How much your company should be making to break even from his work
-              day.
+          <fieldset className="fieldset mt-3">
+            <div className="flex gap-3 items-center">
+              <input
+                type="checkbox"
+                name="is_active"
+                className="toggle checked:bg-primary "
+              />
+              <p className="text-xl font-bold">Currently active</p>
+            </div>
+            <p className="fieldset-label -mt-1">
+              Are you currently working on this project?
             </p>
           </fieldset>
-          <button className="btn btn-accent btn-xl w-full">Sign</button>
+          <button className="btn btn-accent btn-xl w-full">Create</button>
         </form>
       </div>
     </section>
