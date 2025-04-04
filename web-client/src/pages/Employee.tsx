@@ -2,12 +2,13 @@ import { Link, useNavigate, useParams } from "react-router";
 import { IEmployee } from "../types/employee";
 import { useEffect, useState } from "react";
 import pb from "../lib/pocketbase";
+import formatDate from "../lib/formatDate";
 
 export default function Employee() {
   // We can use the `useParams` hook here to access
   // the dynamic pieces of the URL.
-  let { id } = useParams();
-  const [employee, setEmployee] = useState<IEmployee | null | false>(null);
+  let { name } = useParams();
+  const [employees, setEmployees] = useState<IEmployee[] | false>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -15,10 +16,13 @@ export default function Employee() {
       try {
         const employeeData = await pb
           .collection("employees")
-          .getOne<IEmployee>(id || "");
-        setEmployee(employeeData);
+          .getFullList<IEmployee>({
+            filter: `name = "${name}"`,
+            sort: "-created",
+          });
+        setEmployees(employeeData);
       } catch (error: any) {
-        if (error.response.status === 404) setEmployee(false);
+        if (error.response.status === 404) setEmployees(false);
         console.error("Error fetching employee:", error);
       }
     };
@@ -26,15 +30,15 @@ export default function Employee() {
     fetchEmployee();
   }, []);
 
-  const handleDelete = async () => {
-    if (employee) {
+  const handleDelete = async (id: string, created: string) => {
+    if (employees) {
       const confirmation = confirm(
-        `Are you sure you want to delete ${employee.name}?`
+        `Are you sure you want to delete ${name} who was created at ${created}?`
       );
       if (!confirmation) return;
       try {
-        await pb.collection("employees").delete(employee.id || "");
-        alert(`Employee ${employee.name} has been deleted!`);
+        await pb.collection("employees").delete(id || "");
+        alert(`Employee ${name} has been deleted!`);
         navigate("/employees");
       } catch (error) {
         console.error("Error deleting employee:", error);
@@ -52,20 +56,31 @@ export default function Employee() {
           <li>
             <Link to={"/employees"}>Employees</Link>
           </li>
-          <li>{employee && employee.name ? employee.name : "Employee"}</li>
+          <li>{name}</li>
         </ul>
       </div>
-      {employee !== null ? (
-        employee === false ? (
-          <p>There is no such employee!</p>
-        ) : (
+      {employees === false ? (
+        <p>There is no such employee!</p>
+      ) : employees.length > 0 ? (
+        employees.map((employee) => (
           <>
-            <section className="flex flex-col items-center gap-5 border-2 border-primary w-full px-10 py-10 rounded-xl bg-base-100">
+            <section className="flex relative mb-5 flex-col items-center gap-5 border-2 border-primary w-full px-10 py-10 rounded-xl bg-base-100">
+              <div className=" absolute top-2 right-4 flex flex-col justify-center items-right">
+                <p className="w-full text-right text-sm text-base-content/60 -mb-1">
+                  created at:
+                </p>
+                <p className="font-black text-xl text-primary">
+                  {formatDate(employee.created!)}
+                </p>
+              </div>
               <div className="flex flex-col gap-6  w-fit ">
-                <h2 className="text-3xl font-semibold border-l-8 -ml-6 pl-3 border-accent pr-20">
-                  Employee{" "}
-                  <u className="decoration-primary font-extrabold">details</u>:
-                </h2>
+                <div className="flex flex-row justify-between">
+                  <h2 className="text-3xl font-semibold border-l-8 -ml-6 pl-3 border-accent pr-20">
+                    Employee{" "}
+                    <u className="decoration-primary font-extrabold">details</u>
+                    :
+                  </h2>
+                </div>
                 <div className="flex flex-col gap-5 text-lg">
                   <p className="flex justify-between">
                     <strong>Name:</strong> <span>{employee.name}</span>
@@ -89,7 +104,9 @@ export default function Employee() {
                   </button>
                   <button
                     className="btn btn-error flex grow"
-                    onClick={handleDelete}
+                    onClick={() =>
+                      handleDelete(employee.id!, formatDate(employee.created!))
+                    }
                   >
                     Delete
                   </button>
@@ -97,9 +114,9 @@ export default function Employee() {
               </div>
             </section>
           </>
-        )
+        ))
       ) : (
-        <p>Loading...</p>
+        <p>Loading employees...</p>
       )}
     </>
   );

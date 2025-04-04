@@ -4,6 +4,6 @@ export interface IEmployee {
   name: string;
   wage: number;
   baseline_income: number;
-  createdAt?: string;
-  updatedAt?: string;
+  created?: string;
+  updated?: string;
 }
