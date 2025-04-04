@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router";
+import { Link, useNavigate, useParams } from "react-router";
 import { IProject } from "../types/project";
 import pb from "../lib/pocketbase";
 import formatDate from "../lib/formatDate";
 
 export default function Project() {
   let { id } = useParams();
+  const navigate = useNavigate();
   const [project, setProject] = useState<IProject | undefined | false>(
     undefined
   );
+
+  const [refetches, setRefetches] = useState(0);
 
   useEffect(() => {
     const fetchProject = async () => {
@@ -24,7 +27,38 @@ export default function Project() {
     };
 
     fetchProject();
-  }, []);
+  }, [refetches]);
+
+  const handleDelete = async () => {
+    if (project) {
+      const confirmation = confirm(
+        `Are you sure you want to delete project: ${project.name}?`
+      );
+      if (!confirmation) return;
+      try {
+        await pb.collection("projects").delete(id || "");
+        alert(`Project ${project.name} has been deleted!`);
+        navigate("/projects");
+      } catch (error) {
+        console.error("Error deleting prject:", error);
+      }
+    }
+  };
+
+  const handleChangeStatus = async () => {
+    if (!project) return;
+    try {
+      const updated = await pb.collection("projects").update(project.id!, {
+        is_active: !project.is_active,
+      });
+      setRefetches((refetches) => refetches + 1);
+      console.log(updated);
+    } catch (error) {
+      console.error("Error changing project status:", error);
+      alert("Unable to change project status. Please contact the creator.");
+      return;
+    }
+  };
 
   return (
     <>
@@ -110,6 +144,27 @@ export default function Project() {
                     : "Waiting to start work / Finished"}
                 </p>
               </div>
+            </div>
+            <div className="flex flex-col gap-1 w-full mt-10">
+              {!project.is_active && (
+                <button
+                  onClick={handleChangeStatus}
+                  className="btn btn-primary w-full"
+                >
+                  Set status to <u>Active</u>
+                </button>
+              )}
+              {project.is_active && (
+                <button
+                  onClick={handleChangeStatus}
+                  className="btn btn-secondary w-full"
+                >
+                  Set status to <u>Waiting to start work / Finished</u>
+                </button>
+              )}
+              <button onClick={handleDelete} className="btn btn-error w-full">
+                Delete project
+              </button>
             </div>
           </div>
         </section>
