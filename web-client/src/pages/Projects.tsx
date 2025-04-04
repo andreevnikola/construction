@@ -42,9 +42,7 @@ export default function Projects() {
           <thead>
             <tr className="bg-primary/30 border-b-2 border-primary">
               <th>Name</th>
-              <th>Position</th>
-              <th>Wage</th>
-              <th>Baseline Income</th>
+              <th>Pricetag</th>
               <th>Created At</th>
             </tr>
           </thead>
@@ -56,7 +54,7 @@ export default function Projects() {
                   <td>
                     <div className="flex w-full justify-between">
                       <span>{project.name}</span>
-                      <Link to={`/projects/${project.name}`}>
+                      <Link to={`/projects/${project.id}`}>
                         <FontAwesomeIcon
                           className="text-primary"
                           icon={faArrowUpRightFromSquare}
@@ -64,13 +62,46 @@ export default function Projects() {
                       </Link>
                     </div>
                   </td>
-                  {/* <td>{project.position}</td>
-                <td>{project.wage + " BGN "}</td>
-                <td>
-                  {project.baseline_income
-                    ? project.baseline_income + " BGN"
-                    : "non specified"}
-                </td> */}
+                  <td>{project.pricetag} лв.</td>
+                  <td>{formatDate(project.created!)}</td>
+                </tr>
+              ))}
+          </tbody>
+        </table>
+      ) : (
+        <p>Loading projects...</p>
+      )}
+
+      <h2 className="text-4xl font-semibold border-l-8 pl-2 border-secondary mt-10">
+        Archived/Future{" "}
+        <u className="decoration-primary font-extrabold">projects</u>:
+      </h2>
+      {projectsList.length > 0 ? (
+        <table>
+          <thead>
+            <tr className="bg-secondary/30 border-b-2 border-primary">
+              <th>Name</th>
+              <th>Pricetag</th>
+              <th>Created At</th>
+            </tr>
+          </thead>
+          <tbody>
+            {projectsList
+              .filter((prj) => !prj.is_active)
+              .map((project) => (
+                <tr key={project.id}>
+                  <td>
+                    <div className="flex w-full justify-between">
+                      <span>{project.name}</span>
+                      <Link to={`/projects/${project.id}`}>
+                        <FontAwesomeIcon
+                          className="text-primary"
+                          icon={faArrowUpRightFromSquare}
+                        />
+                      </Link>
+                    </div>
+                  </td>
+                  <td>{project.pricetag} лв.</td>
                   <td>{formatDate(project.created!)}</td>
                 </tr>
               ))}
